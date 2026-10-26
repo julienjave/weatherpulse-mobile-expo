@@ -1,25 +1,44 @@
 {
   "expo": {
-    "name": "weatherpulse-mobile-expo",
+    "name": "WeatherPulse",
     "slug": "weatherpulse-mobile-expo",
+    "scheme": "weatherpulse",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
+    "backgroundColor": "#1b1740",
     "ios": {
       "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/android-icon-foreground.png",
-        "backgroundImage": "./assets/android-icon-background.png",
-        "monochromeImage": "./assets/android-icon-monochrome.png"
+        "backgroundColor": "#1b1740",
+        "foregroundImage": "./assets/adaptive-icon.png"
       },
       "predictiveBackGestureEnabled": false
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [
+      "expo-router",
+      "expo-status-bar",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/adaptive-icon.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#1b1740"
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "WeatherPulse uses your location to show the weather where you are."
+        }
+      ]
+    ]
   }
 }
