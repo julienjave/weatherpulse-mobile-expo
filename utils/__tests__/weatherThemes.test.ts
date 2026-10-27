@@ -1,0 +1,188 @@
+import { getWeatherTheme, getWeatherIcon, getWeatherThemeKit } from '../weatherThemes'
+
+describe('weatherThemes', () => {
+  describe('getWeatherTheme', () => {
+    it('should return clear-day theme for code 800 with day icon', () => {
+      const theme = getWeatherTheme(800, '01d')
+      expect(theme.key).toBe('clear-day')
+      expect(theme.isDark).toBe(false)
+    })
+
+    it('should return clear-night theme for code 800 with night icon', () => {
+      const theme = getWeatherTheme(800, '01n')
+      expect(theme.key).toBe('clear-night')
+      expect(theme.isDark).toBe(true)
+    })
+
+    it('should return rain theme for 5xx codes', () => {
+      const theme = getWeatherTheme(502, '10d')
+      expect(theme.key).toBe('rain')
+    })
+
+    it('should return thunderstorm theme for 2xx codes', () => {
+      const theme = getWeatherTheme(211, '11d')
+      expect(theme.key).toBe('thunderstorm')
+    })
+  })
+
+  describe('getWeatherIcon', () => {
+    it('should return clear day/night icons correctly', () => {
+      expect(getWeatherIcon(800, '01d')).toBe('clear-day.png')
+      expect(getWeatherIcon(800, '01n')).toBe('clear-night.png')
+    })
+
+    it('should return partly-cloudy day/night icons correctly', () => {
+      expect(getWeatherIcon(801, '02d')).toBe('partly-cloudy-day.png')
+      expect(getWeatherIcon(801, '02n')).toBe('partly-cloudy-night.png')
+    })
+
+    it('should return the drizzle icon for 3xx codes', () => {
+      expect(getWeatherIcon(300, '09d')).toBe('drizzle.png')
+      expect(getWeatherIcon(321, '09n')).toBe('drizzle.png')
+    })
+
+    it('should return the thunderstorm icon for codes 210 and 211', () => {
+      expect(getWeatherIcon(210, '11d')).toBe('thunderstorm.png')
+      expect(getWeatherIcon(211, '11n')).toBe('thunderstorm.png')
+    })
+  })
+
+  // --- ADDITIONAL COVERAGE ---
+
+  describe('getWeatherTheme (all condition groups)', () => {
+    it.each([
+      [200, 'thunderstorm'],
+      [299, 'thunderstorm'],
+      [300, 'drizzle'],
+      [321, 'drizzle'],
+      [500, 'rain'],
+      [531, 'rain'],
+      [600, 'snow'],
+      [622, 'snow'],
+      [701, 'atmosphere'],
+      [781, 'atmosphere'],
+      [801, 'partly-cloudy'],
+      [802, 'partly-cloudy'],
+      [803, 'clouds'],
+      [804, 'clouds'],
+    ])('should map code %i to the %s theme', (code, expectedKey) => {
+      expect(getWeatherTheme(code, '01d').key).toBe(expectedKey)
+    })
+
+    it('should ignore day/night for precipitation and atmosphere conditions', () => {
+      expect(getWeatherTheme(211, '11n').key).toBe('thunderstorm')
+      expect(getWeatherTheme(301, '09n').key).toBe('drizzle')
+      expect(getWeatherTheme(502, '10n').key).toBe('rain')
+      expect(getWeatherTheme(601, '13n').key).toBe('snow')
+      expect(getWeatherTheme(741, '50n').key).toBe('atmosphere')
+    })
+
+    it.each([801, 802, 803, 804])('should use the clear-night theme for cloud code %i at night', (code) => {
+      expect(getWeatherTheme(code, '04n').key).toBe('clear-night')
+    })
+
+    it('should default to day when no icon code is provided', () => {
+      expect(getWeatherTheme(800).key).toBe('clear-day')
+      expect(getWeatherTheme(801).key).toBe('partly-cloudy')
+      expect(getWeatherTheme(804).key).toBe('clouds')
+    })
+
+    it('should fall back to clear day/night for unknown codes', () => {
+      expect(getWeatherTheme(100, '01d').key).toBe('clear-day')
+      expect(getWeatherTheme(900, '01n').key).toBe('clear-night')
+    })
+
+    it('should mark light themes as not dark', () => {
+      expect(getWeatherTheme(600).isDark).toBe(false) // snow
+      expect(getWeatherTheme(701).isDark).toBe(false) // atmosphere
+      expect(getWeatherTheme(502).isDark).toBe(true) // rain
+    })
+  })
+
+  describe('getWeatherIcon (all condition groups)', () => {
+    it.each([
+      [802, 'cloudy'],
+      [803, 'overcast'],
+      [804, 'overcast'],
+      [300, 'drizzle'],
+      [321, 'drizzle'],
+      [500, 'light-rain'],
+      [520, 'light-rain'],
+      [501, 'rain'],
+      [521, 'rain'],
+      [502, 'heavy-rain'],
+      [504, 'heavy-rain'],
+      [522, 'heavy-rain'],
+      [531, 'heavy-rain'],
+      [511, 'sleet'],
+      [611, 'sleet'],
+      [616, 'sleet'],
+      [600, 'light-snow'],
+      [620, 'light-snow'],
+      [601, 'snow'],
+      [621, 'snow'],
+      [602, 'heavy-snow'],
+      [622, 'heavy-snow'],
+      [701, 'fog'],
+      [741, 'fog'],
+      [762, 'fog'],
+      [771, 'tornado'],
+      [781, 'tornado'],
+      [210, 'thunderstorm'],
+      [211, 'thunderstorm'],
+      [212, 'heavy-thunderstorm'],
+      [221, 'heavy-thunderstorm'],
+      [200, 'rain-thunderstorm'],
+      [202, 'rain-thunderstorm'],
+      [230, 'rain-thunderstorm'],
+      [232, 'rain-thunderstorm'],
+    ])('should map code %i to the same %s icon by day and night', (code, iconName) => {
+      expect(getWeatherIcon(code, '01d')).toBe(`${iconName}.png`)
+      expect(getWeatherIcon(code, '01n')).toBe(`${iconName}.png`)
+    })
+
+    it('should default to day when no icon code is provided', () => {
+      expect(getWeatherIcon(800)).toBe('clear-day.png')
+      expect(getWeatherIcon(801)).toBe('partly-cloudy-day.png')
+    })
+
+    it('should fall back to clear day/night for unknown codes', () => {
+      expect(getWeatherIcon(100, '01d')).toBe('clear-day.png')
+      expect(getWeatherIcon(900, '01n')).toBe('clear-night.png')
+    })
+  })
+
+  describe('getWeatherThemeKit', () => {
+    it('should combine theme and icon into a complete theme kit', () => {
+      const kit = getWeatherThemeKit(800, '01d')
+      expect(kit.theme.key).toBe('clear-day')
+      expect(kit.icon).toBe('clear-day.png')
+    })
+
+    it('should pass the day/night flag through to both theme and icon', () => {
+      const kit = getWeatherThemeKit(801, '02n')
+      expect(kit.theme.key).toBe('clear-night')
+      expect(kit.icon).toBe('partly-cloudy-night.png')
+    })
+  })
+
+  // Native LinearGradient reads `colors`; `gradient` is the web CSS kept for reference.
+  // They are written out separately, so make sure every theme keeps them in sync
+  describe('theme colors', () => {
+    it('should list the same color stops as the CSS gradient, for every theme', () => {
+      const themes = new Map<string, ReturnType<typeof getWeatherTheme>>()
+      for (let code = 200; code < 900; code++) {
+        for (const icon of ['01d', '01n']) {
+          const theme = getWeatherTheme(code, icon)
+          themes.set(theme.key, theme)
+        }
+      }
+
+      expect(themes.size).toBe(9)
+      for (const theme of themes.values()) {
+        const cssStops = theme.gradient.match(/#[0-9a-f]{6}/gi)
+        expect({ key: theme.key, colors: [...theme.colors] }).toEqual({ key: theme.key, colors: cssStops })
+      }
+    })
+  })
+})

@@ -2,10 +2,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import { renderHook, act, waitFor } from '@testing-library/react-native'
 import { useLocalStorage } from '../useLocalStorage'
 
-jest.mock('@react-native-async-storage/async-storage', () =>
-  require('@react-native-async-storage/async-storage/jest/async-storage-mock')
-)
-
 describe('useLocalStorage', () => {
   const TEST_KEY = 'test_key'
 
