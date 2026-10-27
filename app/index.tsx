@@ -122,7 +122,7 @@ export default function HomeScreen() {
               resizeMode="contain"
             />
             <View style={styles.titleContainer}>
-              <Text variant="headlineLarge" style={styles.title}>
+              <Text variant="headlineLarge" accessibilityRole="header" style={styles.title}>
                 WeatherPulse
               </Text>
               <Text variant="bodyLarge" style={styles.subtitle}>

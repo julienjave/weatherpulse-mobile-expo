@@ -94,6 +94,7 @@ export function TemperatureTrendsCard({
         <View style={[glassStyle.container, styles.container]}>
             <Text
                 variant="titleMedium"
+                accessibilityRole="header"
                 style={{ color: textColor }}
             >
                 Next 24 Hours
@@ -104,7 +105,7 @@ export function TemperatureTrendsCard({
                     - No Forecast Data -
                 </Text>
             ) : (
-                <View style={styles.chartWrapper} onLayout={handleLayout}>
+                <View style={styles.chartWrapper} onLayout={handleLayout} testID="temperature-chart-area">
                     {/* Wait for the first measurement: a 0-width chart would lay out its points wrongly */}
                     {chartAreaWidth > 0 && (
                         <LineChart

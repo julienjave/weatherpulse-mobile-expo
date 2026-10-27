@@ -1,10 +1,11 @@
 import { useState, useCallback, useEffect } from "react"
 import {
     View,
-    ActivityIndicator,
     StyleSheet,
 } from 'react-native'
 import {
+    // Paper's spinner (unlike React Native's) is exposed to screen readers as a progress bar
+    ActivityIndicator,
     TextInput,
     IconButton,
     Button,
@@ -34,6 +35,16 @@ interface SearchBarProps {
     isGeoloading?: boolean
     // Function that reports city search failures to the toast notifications (Optional)
     onError?: (message: string) => void
+}
+
+
+// === HELPERS =============================================================================
+
+// "Sydney, New South Wales, Australia": shown in the dropdown, and in the input once selected
+function formatLocationLabel(location: GeocodingLocation): string {
+    const country = formatCountryName(location.country)
+    const state = location.state ? `, ${location.state}` : ''
+    return `${location.name}${state}, ${country}`
 }
 
 
@@ -138,9 +149,11 @@ export const SearchBar: React.FC<SearchBarProps> = ({
 
     // Handler 4: Select a city from the dropdown
     const handleSelectCity = useCallback((option: GeocodingLocation) => {
+        // Show the chosen city in the input, like the web app's Autocomplete
+        handleInputChange(formatLocationLabel(option))
         setDropdownOpen(false)
         onSelectLocation(option)
-    }, [onSelectLocation])
+    }, [handleInputChange, onSelectLocation])
 
     // Handler 5: City search input change
     const handleCityInputChange = useCallback((value: string) => {
@@ -151,13 +164,16 @@ export const SearchBar: React.FC<SearchBarProps> = ({
     // 4. RENDER
 
     const modeButtons = [
-        { value: 'city', label: 'City', icon: 'magnify' as const, testID: 'mode-city' },
-        { value: 'coords', label: 'Coordinates', icon: 'map-marker' as const, testID: 'mode-coords' },
+        { value: 'city', label: 'City', icon: 'magnify' as const, testID: 'mode-city', accessibilityLabel: 'City search' },
+        { value: 'coords', label: 'Coordinates', icon: 'map-marker' as const, testID: 'mode-coords', accessibilityLabel: 'Coordinates search' },
     ]
 
-    const noOptionsText = searchTerm.trim().length >= 2
-        ? `No cities found for "${searchTerm.trim()}"`
-        : 'Type at least 2 characters'
+    // While searching (including the debounce delay) say so, rather than flashing "No cities found"
+    const noOptionsText = isSearching
+        ? 'Loading…'
+        : searchTerm.trim().length >= 2
+            ? `No cities found for "${searchTerm.trim()}"`
+            : 'Type at least 2 characters'
 
     return (
         <View style={styles.outer}>
@@ -213,7 +229,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
                             value={searchTerm}
                             onChangeText={handleCityInputChange}
                             onFocus={() => setDropdownOpen(searchTerm.trim().length >= 2 && options.length > 0)}
-                            right={isSearching ? <TextInput.Icon icon={() => <ActivityIndicator size="small" />} /> : undefined}
+                            right={isSearching ? <TextInput.Icon icon={() => <ActivityIndicator size="small" accessibilityLabel="Searching cities" />} /> : undefined}
                             accessibilityLabel="Search city"
                             testID="search-city-input"
                         />
@@ -225,12 +241,12 @@ export const SearchBar: React.FC<SearchBarProps> = ({
                                     // A plain map, not a FlatList: the search returns at most 5 cities, and a
                                     // virtualized list can't be nested inside the screen's ScrollView
                                     options.map((item) => {
-                                        const country = formatCountryName(item.country)
-                                        const state = item.state ? `, ${item.state}` : ''
-                                        const label = `${item.name}${state}, ${country}`
+                                        const label = formatLocationLabel(item)
                                         return (
                                             <Button
                                                 key={`${item.lat},${item.lon}`}
+                                                // Without it, the icon's font glyph is read out as part of the name
+                                                accessibilityLabel={label}
                                                 mode="text"
                                                 onPress={() => handleSelectCity(item)}
                                                 style={styles.optionButton}
@@ -286,7 +302,8 @@ export const SearchBar: React.FC<SearchBarProps> = ({
 
                 {/* ROW 3: Coordinate validation feedback */}
                 {coordError && (
-                    <Text style={styles.errorText}>{coordError}</Text>
+                    // "alert" so screen readers announce it, like the web app's MUI Alert
+                    <Text accessibilityRole="alert" style={styles.errorText}>{coordError}</Text>
                 )}
 
             </View>

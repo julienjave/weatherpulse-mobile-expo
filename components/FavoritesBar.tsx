@@ -60,6 +60,8 @@ export function FavoritesBar({
                                         showSelectedCheck={false}
                                         onPress={() => onSelect(city)}
                                         onClose={() => onDelete(city)}
+                                        // Paper's default is "Close" on every chip; name the city instead
+                                        closeIconAccessibilityLabel={`Remove ${label}`}
                                         accessibilityState={{ selected: isActive }}
                                         accessibilityLabel={label}
                                         style={isActive ? styles.activeChip : undefined}
