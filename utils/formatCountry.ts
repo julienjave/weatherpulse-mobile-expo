@@ -1,6 +1,7 @@
 /**
  * Converts a 2-letter ISO country code into a full country name.
- * Uses the browser's native Intl.DisplayNames API for lightweight zero-dependency lookup.
+ * Uses the built-in Intl.DisplayNames API for a zero-dependency lookup. If the JS engine
+ * doesn't provide it, the code itself is returned (e.g. "FR"), so labels still read sensibly.
  * 
  * @param countryCode - 2-letter ISO country code (e.g., "GB", "US", "JP")
  * @param locale - BCP 47 language tag (defaults to "en" for English)

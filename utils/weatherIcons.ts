@@ -1,4 +1,5 @@
-// Replace the Vite glob import with a static asset dictionary
+// Static map of bundled weather icons. Metro only bundles assets it can see in a literal
+// `require()`, so each icon is listed explicitly rather than built from its filename
 const icons: Record<string, any> = {
     'clear-day.png': require('@/assets/icons/clear-day.png'),
     'clear-night.png': require('@/assets/icons/clear-night.png'),

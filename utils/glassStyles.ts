@@ -17,7 +17,7 @@ export const PANEL_STYLE: ViewStyle = {
 
 // === GLASSMORPHISM ========================================================================
 
-// Native glass style equivalent of the legacy MUI `sx` object, for cards on the weather gradient.
+// Translucent glass card for content on the weather gradient (the web app's `glassSx`).
 // There's no backdrop blur: blurring a smooth gradient looks the same as not blurring it, and
 // on Android expo-blur would need a BlurTargetView, so the translucent fill does the work.
 export const glassStyle = StyleSheet.create({
@@ -29,14 +29,3 @@ export const glassStyle = StyleSheet.create({
         boxShadow: '0px 8px 32px rgba(0, 0, 0, 0.25)', // Same as the web app's glassSx
     },
 })
-
-// Kept for compatibility with any remaining web references, but new code should use `glassStyle`.
-export const glassSx = {
-    backgroundColor: 'rgba(255, 255, 255, 0.25)',
-    backgroundImage: 'none',
-    backdropFilter: 'blur(10px) saturate(160%)',
-    WebkitBackdropFilter: 'blur(10px) saturate(160%)',
-    border: '1px solid rgba(255, 255, 255, 0.5)',
-    borderRadius: '12px',
-    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.25)',
-}
