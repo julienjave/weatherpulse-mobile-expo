@@ -14,6 +14,7 @@ import { getReverseGeocode } from '@/services/weatherApi'
 import { useFavorites } from '@/hooks/useFavorites'
 import { useNotification } from '@/hooks/useNotification'
 import { APP_BACKGROUND_COLOR } from '@/utils/appColors'
+import { FONTS } from '@/utils/appFonts'
 
 const logo = require('@/assets/weather-pulse-logo.png')
 const background = require('@/assets/weather-pulse-bg.jpg')
@@ -124,7 +125,7 @@ export default function HomeScreen() {
               <Text variant="headlineLarge" style={styles.title}>
                 WeatherPulse
               </Text>
-              <Text variant="bodyMedium" style={styles.subtitle}>
+              <Text variant="bodyLarge" style={styles.subtitle}>
                 Real-time weather forecast & air quality tracking
               </Text>
             </View>
@@ -206,13 +207,17 @@ const styles = StyleSheet.create({
   titleContainer: {
     alignItems: 'center',
   },
+  // Sizes match the web app on phones (2.25rem title, 1rem subtitle)
   title: {
-    fontWeight: '700',
+    fontFamily: FONTS.bold,
+    fontSize: 36,
+    lineHeight: 44,
     color: '#fff',
     marginBottom: 4,
     textAlign: 'center',
   },
   subtitle: {
+    fontFamily: FONTS.regular,
     color: '#fff',
     textAlign: 'center',
   },

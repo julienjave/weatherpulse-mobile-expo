@@ -15,6 +15,7 @@ import {
 import { useCitySearch } from "../hooks/useCitySearch"
 import { getReverseGeocode } from '../services/weatherApi'
 import { formatCountryName } from "../utils/formatCountry"
+import { PANEL_STYLE } from "../utils/glassStyles"
 import type { GeocodingLocation } from "../types/weather"
 
 
@@ -304,7 +305,7 @@ const styles = StyleSheet.create({
     paper: {
         padding: 16,
         borderRadius: 12,
-        backgroundColor: 'rgba(255, 255, 255, 0.25)',
+        ...PANEL_STYLE,
     },
     headerRow: {
         flexDirection: 'row',
@@ -330,7 +331,9 @@ const styles = StyleSheet.create({
     },
     dropdown: {
         marginTop: 4,
-        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+        backgroundColor: '#fff',
+        borderWidth: 1,
+        borderColor: 'rgba(0, 0, 0, 0.12)', // Separates the list from the white panel behind it
         borderRadius: 8,
         paddingVertical: 4,
     },

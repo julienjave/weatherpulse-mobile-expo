@@ -3,6 +3,7 @@ import { Chip, Text } from "react-native-paper"
 import Animated, { LinearTransition, FadeIn, FadeOut } from "react-native-reanimated"
 import type { GeocodingLocation } from "../types/weather"
 import { isSameLocation } from "../utils/compareCities"
+import { PANEL_STYLE } from "../utils/glassStyles"
 
 
 // === TYPES & INTERFACES ==================================================================
@@ -50,14 +51,18 @@ export function FavoritesBar({
                                     entering={FadeIn}
                                     exiting={FadeOut}
                                 >
+                                    {/* Outlined when idle, filled blue when active (like the web app's MUI chips) */}
                                     <Chip
                                         icon="star"
+                                        mode={isActive ? 'flat' : 'outlined'}
                                         selected={isActive}
+                                        selectedColor={isActive ? '#fff' : undefined}
+                                        showSelectedCheck={false}
                                         onPress={() => onSelect(city)}
                                         onClose={() => onDelete(city)}
                                         accessibilityState={{ selected: isActive }}
                                         accessibilityLabel={label}
-                                        style={isActive ? styles.activeChip : styles.chip}
+                                        style={isActive ? styles.activeChip : undefined}
                                     >
                                         {label}
                                     </Chip>
@@ -81,7 +86,7 @@ const styles = StyleSheet.create({
     paper: {
         padding: 12,
         borderRadius: 12,
-        backgroundColor: 'rgba(255, 255, 255, 0.25)',
+        ...PANEL_STYLE,
     },
     chipRow: {
         flexDirection: 'row',
@@ -91,11 +96,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         minHeight: 32,
     },
-    chip: {
-        backgroundColor: 'rgba(255, 255, 255, 0.4)',
-    },
     activeChip: {
-        backgroundColor: '#419cd8',
+        backgroundColor: '#1976d2',
     },
     placeholder: {
         fontSize: 12,

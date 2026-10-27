@@ -1,6 +1,7 @@
 import { View, StyleSheet } from "react-native"
 import { IconButton, Switch, Text, Tooltip } from "react-native-paper"
 import type { TemperatureUnit } from "../types/weather"
+import { PANEL_STYLE } from "../utils/glassStyles"
 
 
 // === TYPES & INTERFACES ==================================================================
@@ -69,27 +70,18 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         padding: 8,
     },
+    // Solid white like the web app's MUI Papers, so the dark text stays readable on every theme gradient
     favoriteButton: {
         borderRadius: 20,
-        backgroundColor: 'rgba(255, 255, 255, 0.25)',
-        elevation: 3,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.2,
-        shadowRadius: 4,
+        ...PANEL_STYLE,
     },
     unitsCard: {
         alignItems: 'center',
         justifyContent: 'center',
         width: 'auto',
         padding: 8,
-        borderRadius: 12,
-        backgroundColor: 'rgba(255, 255, 255, 0.25)',
-        elevation: 3,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.2,
-        shadowRadius: 4,
+        borderRadius: 4, // MUI Paper's default radius
+        ...PANEL_STYLE,
     },
     unitsLabel: {
         fontWeight: 'bold',
