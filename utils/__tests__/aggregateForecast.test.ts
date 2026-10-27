@@ -1,12 +1,6 @@
 import { aggregateDailyForecast, getLocalDateKey, getLocalHour } from '../aggregateForecast'
 import type { ForecastItem } from '../../types/weather'
-
-// Node re-reads process.env.TZ on change, so tests can pin the machine time zone (Jest has no stubEnv)
-const ORIGINAL_TZ = process.env.TZ
-const restoreTimeZone = () => {
-  if (ORIGINAL_TZ === undefined) delete process.env.TZ
-  else process.env.TZ = ORIGINAL_TZ
-}
+import { pinTimeZone, restoreTimeZone } from '../../test-utils/timeZone'
 
 // UTC seconds for a given day/hour in Jan 2026 (15 Jan 2026 is a Thursday)
 const utc = (day: number, hour: number) => Date.UTC(2026, 0, day, hour) / 1000
@@ -65,7 +59,7 @@ describe('aggregateForecast', () => {
   describe('aggregateDailyForecast', () => {
     // dateLabel goes through formatLocalTime, which depends on the machine clock and TZ
     beforeEach(() => {
-      process.env.TZ = 'Europe/Paris'
+      pinTimeZone('Europe/Paris')
       jest.useFakeTimers() // Only Date matters here: these are pure functions with no timers
       jest.setSystemTime(utc(15, 12) * 1000)
     })

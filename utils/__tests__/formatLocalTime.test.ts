@@ -1,11 +1,5 @@
 import { formatLocalTime } from '../formatLocalTime'
-
-// Node re-reads process.env.TZ on change, so tests can pin the machine time zone (Jest has no stubEnv)
-const ORIGINAL_TZ = process.env.TZ
-const restoreTimeZone = () => {
-  if (ORIGINAL_TZ === undefined) delete process.env.TZ
-  else process.env.TZ = ORIGINAL_TZ
-}
+import { pinTimeZone, restoreTimeZone } from '../../test-utils/timeZone'
 
 // Output must depend only on the city offset, never on the machine running the tests.
 // TZ is pinned to a zone with DST so the regression test at the bottom is meaningful.
@@ -14,7 +8,7 @@ describe('formatLocalTime', () => {
   const DT = Date.UTC(2026, 0, 15, 12, 0) / 1000
 
   beforeEach(() => {
-    process.env.TZ = 'Europe/Paris'
+    pinTimeZone('Europe/Paris')
     jest.useFakeTimers() // Only Date matters here: these are pure functions with no timers
     jest.setSystemTime(DT * 1000)
   })
